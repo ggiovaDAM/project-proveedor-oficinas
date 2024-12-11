@@ -8,6 +8,8 @@
 
                 define("PDO_DIR", BACKEND_DIR . "/pdo");
 
+                define("FUNCTIONS_DIR", BACKEND_DIR . "/functions");
+
 
 
 

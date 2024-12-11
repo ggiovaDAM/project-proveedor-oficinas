@@ -16,46 +16,17 @@
      * 
      * @param string $xmlFile Path to the XML configuration file
      * @return PDO Returns PDO connection object if successful, on failure it redirects to an error page
+     * 
+     * @see fail() Sends to an error page.
+     * @see validateXML() Validates the XML
      */
     function connectToDatabase(string $xmlFile): PDO {
+        require_once FUNCTIONS_DIR . "/common.php";
+        
         $xsdFile = PDO_DIR . "/server_config_validation.xsd";
 
-        // Check if the XML and XSD files exist
-        if (@file_exists($xmlFile) === false) {
-            fail(
-                "Database Error",
-                "The file <b>" . htmlspecialchars($xmlFile) . "</b> was not found, please make sure the file exists and the path is written correctly!"
-            );
-        }
-        if (@file_exists($xsdFile) === false) {
-            fail(
-                "Database Error",
-                "The file <b>" . htmlspecialchars($xsdFile) . "</b> was not found, please make sure the file exists and the path is written correctly!"
-            );
-        }
-
-        // Load and validate XML
-        $xml = @simplexml_load_file($xmlFile);
-
-        // Check if the XML file is properly formatted
-        if ($xml === false) {
-            fail(
-                "Database Error",
-                "The file <b>$xmlFile</b> does not have the correct XML format, please make sure the file is properly formatted!"
-            );
-        }
-
-        // Validate against schema
-        $dom = new DOMDocument();
-        $dom->loadXML($xml->asXML());
-
-        // Check if the XML file is properly validated with the XSD
-        if (@$dom->schemaValidate($xsdFile) === false) {
-            fail(
-                "Database Error",
-                "The file <b>$xmlFile</b> is not properly validated with the <b>XSD</b>!"
-            );
-        }
+        // Validates XML
+        $xml = validateXML($xmlFile, $xsdFile, "Database Connection Error");
 
         // Extract configuration
         $config = [
@@ -90,17 +61,4 @@
                 "<b>Error Details:</b> " . htmlspecialchars($e->getMessage())
             );
         }
-    }
-
-    function fail(string $title, string ...$paragraphs): void {
-        startSession();
-        
-        $result = "<h1>" . htmlspecialchars($title) . "</h1>";
-        foreach ($paragraphs as $paragraph) {
-            $result .= "<p>$paragraph</p>";
-        }
-
-        $_SESSION["ERROR"] = $result;
-        header("Location: " . ERROR_URL);
-        exit();
     }
