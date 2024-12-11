@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/../../../config.php";
+    require_once __DIR__ . "/../../config.php";
 
     /**
      * Starts a session if one doesn't exist.

@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/../../../config.php";
+    require_once __DIR__ . "/../../config.php";
 
     /**
      * Creates a connection to the database specified in ```$xmlFile``` and returns it.
